@@ -1,0 +1,18 @@
+<%-include('head')%>
+</head>
+<body style="text-align: center;">
+<ul >
+  <div style="text-align: left; border:1px solid blue; padding:2px ; color: brown">
+     About &nbsp;<strong><%=studentDetails.personName%></strong> <span>--></span> 
+    <br>
+      Cell: &nbsp;<%=studentDetails.contactNo%>&nbsp;||
+      Address: &nbsp;<%=studentDetails.address%>&nbsp;||
+      Department: &nbsp;<%=studentDetails.deptName%> ||
+      Student ID: &nbsp; <%=studentDetails.stId%>
+  </div>
+</ul>
+<a href="/">Back to Home</a><br>
+<a href="/result">Back to Result</a><br>
+<a href="/form">Back to Form</a>
+</body>
+</html>

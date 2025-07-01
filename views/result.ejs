@@ -1,0 +1,27 @@
+<%-include('head')%>
+</head>
+<body style="text-align: center;">
+  <h3 style="text-align: center;">Entries</h3>
+  <table style="padding: 2px;  display: flex; align-items: center; justify-content: center;">
+    <tr  >
+        <th>Name &nbsp;&nbsp;</th>
+        <th>Department&nbsp;&nbsp;</th>
+        <th>Gender&nbsp;&nbsp;</th>
+        <th>Student Information&nbsp;&nbsp;&nbsp;&nbsp;</th>
+        <th>Action&nbsp;&nbsp;</th>
+    </tr>
+    <%resultArray.forEach( elem => { %>
+    <tr >
+      <td><%=elem.personName%></td>
+      <td><%=elem.deptName%></td>
+      <td><%=elem.gender%></td>
+      <td><a href="/result/<%=elem._id%>">Details</a></td>
+      <td><a href="/edit/<%=elem._id%>">Edit</a></td>
+      <td><a href="/delete/<%=elem._id%>">Delete</a></td>
+    </tr>
+    <%})%>
+</table>
+<a href="/">Go back to Home</a>&nbsp; &nbsp;
+<a href="/form">Go back to Form</a>
+</body>
+</html>
