@@ -1,8 +1,22 @@
 const model = require("../model/onlyModel");
 const { getDB } = require("../util/databaseUtil");
 const { ObjectId } = require("mongodb");
+
+
+exports.showLoginForm = (req,res,next)=>{
+  res.render('logInForm',{ pageTitle: 'controllers-showLoginPage'})
+}
+exports.showLoggedIn = (req,res,next)=>{
+  
+  res.cookie('isLoggedIn', true);
+  res.render('loggedIn',{pageTitle: 'controllers-showLoggedIn'})
+}
+exports.loggedOut = (req,res,next)=>{
+  res.cookie('isLoggedIn', false);
+  res.redirect('/');
+}
 exports.showHome = (req, res, next) => {
-  res.render("homePage", { pageTitle: "controllers-showHome" });
+  res.render("homePage", { pageTitle: "controllers-showHome", isLoggedIn:req.isLoggedIn });
 };
 exports.showForm = (req, res, next) => {
   res.render("form", { pageTitle: "controllers-showForm" });
