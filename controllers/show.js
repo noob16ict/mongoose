@@ -1,3 +1,4 @@
+const session = require('express-session');
 const model = require("../model/onlyModel");
 const { getDB } = require("../util/databaseUtil");
 const { ObjectId } = require("mongodb");
@@ -6,16 +7,22 @@ const { ObjectId } = require("mongodb");
 exports.showLoginForm = (req,res,next)=>{
   res.render('logInForm',{ pageTitle: 'controllers-showLoginPage'})
 }
+
 exports.showLoggedIn = (req,res,next)=>{
-  
-  res.cookie('isLoggedIn', true);
+  //res.cookie('isLoggedIn', true);
+  req.session.isLoggedIn = true;
+  //console.log("Session: ", req.session);
   res.render('loggedIn',{pageTitle: 'controllers-showLoggedIn'})
 }
+
 exports.loggedOut = (req,res,next)=>{
-  res.cookie('isLoggedIn', false);
-  res.redirect('/');
+    req.session.isLoggedIn = false;
+    //  res.cookie('isLoggedIn', false);
+    // res.render("homePage", { pageTitle: "controllers-showHome", isLoggedIn:req.isLoggedIn });
+    res.redirect('/');
 }
 exports.showHome = (req, res, next) => {
+  console.log("session: ", req.session.isLoggedIn);
   res.render("homePage", { pageTitle: "controllers-showHome", isLoggedIn:req.isLoggedIn });
 };
 exports.showForm = (req, res, next) => {
@@ -68,6 +75,7 @@ exports.showEditForm = (req, res, next) => {
   });
 
 };
+
  exports.saveEdit = (req, res, next) => {
   const { stId, personName, deptName, gender, contactNo, address } = req.body;
   model.findById(req.params._id)
