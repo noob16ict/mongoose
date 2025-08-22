@@ -8,7 +8,9 @@ firstRouter.get("/result/:_id", showController.showInfo);
 firstRouter.get('/delete/:_id',showController.showDeleteMsg);
 firstRouter.get( '/edit/:_id', showController.showEditForm);
 firstRouter.get('/login', showController.showLoginForm);
-firstRouter.get('/logout', showController.loggedOut)
+firstRouter.get('/logout', showController.loggedOut);
+firstRouter.get('/signup', showController.showSignUpForm);
+firstRouter.post('/signup', showController.showSignUpSuccess);
 firstRouter.post("/", showController.saveDataAndShowSuccess);
 firstRouter.post("/editDone/:_id",showController.saveEdit);
 firstRouter.post("/login", showController.showLoggedIn);

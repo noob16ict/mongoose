@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-
+const { check, validationResult } = require('express-validator');
 
 //const rootDir = require('./util/pathUtils');
 

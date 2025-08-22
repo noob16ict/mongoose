@@ -1,15 +1,17 @@
 <%-include('head')%>
 </head>
-<body style="text-align: center;">
+<body style="text-align: center; background-color: brown; color: white;">
+    <h2>Welcome</h2>
    <%if(!isLoggedIn){%>
-   <a href="/login">Login</a>
+   <a href="/signup" style="color: white;">Sign UP</a><br>
+   <a href="/login" style="color: white;">Login</a>
    <%}%>
    
    <h3>Register Book!</h3>
     <%if(isLoggedIn){%>
-   <a href="/logout">Logout</a> &nbsp; &nbsp;
-   <a href="/form">Add New</a> &nbsp; &nbsp;
-   <a href="/result">Result</a>
+   <a href="/logout" style="color: white;">Logout</a> &nbsp; &nbsp;
+   <a href="/form" style="color: white;">Add New</a> &nbsp; &nbsp;
+   <a href="/result" style="color: white;">Result</a>
     <%}%>
 </body>
 </html>

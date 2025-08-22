@@ -2,7 +2,79 @@ const session = require('express-session');
 const model = require("../model/onlyModel");
 const { getDB } = require("../util/databaseUtil");
 const { ObjectId } = require("mongodb");
+//const { validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
+exports.showSignUpForm = (req,res,next)=>{
+  res.render('signupForm', {pageTitle: 'controllers-showSignUpForm'});
+}
+
+exports.showSignUpSuccess = [
+  check('firstName')
+  .notEmpty()
+  .withMessage('First Name is required')
+  .trim()
+  .isLength({min:2})
+  .withMessage('First name must be at least 2 charecters long')
+  .matches(/^[a-zA-Z\s]+$/)
+  .withMessage('First name can only contain letters'),
+
+  check('secondName')
+  .notEmpty()
+  .withMessage('Second Name is required')
+  .trim()
+  .isLength({min:2})
+  .withMessage('Second name must be at least 2 charecters long')
+  .matches(/^[a-zA-Z\s]+$/)
+  .withMessage('Second name can only contain letters'),
+   
+  check('password')
+  .isLength({min:8})
+  .withMessage('Password must be at least 8 charecters long')
+  .matches(/[a-z]/)
+  .withMessage('Password must contain at least one lowercase letter')
+  .matches(/[A-Z]/)
+  .withMessage('password must contain at least one uppercase letter')
+  .matches(/[!@#$%^&*(),.?":{}|<>]/)
+  .withMessage('password must contain at least one special charecter')
+  .trim(),
+
+  check('confirm-password')
+  .trim()
+  .custom( (value, {req})=>{
+   if(value !== req.body.password)
+  {
+    throw new Error('Password do not match')
+  }
+  return true;
+  } ),
+  (req,res,next)=>{
+   const {firstName,secondName, password} = req.body;
+   const errors = validationResult(req);
+
+      //console.log(firstName,secondName,password);
+      //console.log(errors.array().map(err=>err.msg));
+      // res.render('logInForm',{pageTitle: 'logIn'});
+
+  if(!errors.isEmpty())
+  {
+    return res.status(422).render('signupForm',
+      {
+        pageTitle:'controllers-showSignUpSuccess',
+        isLoggedIn: false,
+        errMsg : errors.array().map(err=>err.msg),
+        oldInput: {
+          firstName,
+          secondName
+        }
+      }
+    )
+  }
+  else{
+    res.render('logInForm', {pageTitle: 'controllers-showSignUpSuccess'});
+  }
+   
+}]
 
 exports.showLoginForm = (req,res,next)=>{
   res.render('logInForm',{ pageTitle: 'controllers-showLoginPage'})
