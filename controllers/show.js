@@ -1,9 +1,17 @@
 const session = require('express-session');
+
 const model = require("../model/onlyModel");
+const registeredUser = require('../model/registeredUser');
+
 const { getDB } = require("../util/databaseUtil");
 const { ObjectId } = require("mongodb");
 //const { validationResult } = require('express-validator');
+
 const { check, validationResult } = require('express-validator');
+//const registeredUser = require('../model/registeredUser');
+
+const bcrypt = require('bcryptjs');
+
 
 exports.showSignUpForm = (req,res,next)=>{
   res.render('signupForm', {pageTitle: 'controllers-showSignUpForm'});
@@ -48,6 +56,7 @@ exports.showSignUpSuccess = [
   }
   return true;
   } ),
+
   (req,res,next)=>{
    const {firstName,secondName, password} = req.body;
    const errors = validationResult(req);
@@ -71,18 +80,83 @@ exports.showSignUpSuccess = [
     )
   }
   else{
-    res.render('logInForm', {pageTitle: 'controllers-showSignUpSuccess'});
+    bcrypt.hash(password,10)
+    .then(
+            hashedPass=>{
+            const rstdUsers = new registeredUser(
+              { firstName,
+                secondName,
+                password:hashedPass}
+            );
+            rstdUsers.save().then(
+            ()=>{
+            res.render('logInForm', {pageTitle: 'controllers-showSignUpSuccess', errMsg: ''});
+            })}
+    )
+    .catch(
+            err=>{
+            return res.status(422).render('signupForm',
+            {
+            pageTitle:'controllers-showSignUpSuccess',
+            isLoggedIn: false,
+            errMsg : [err.msg],
+            oldInput: {
+            firstName,
+            secondName
+            }
+            }
+            )
+            }
+      )
+} 
+    //res.render('logInForm', {pageTitle: 'controllers-showSignUpSuccess'});
   }
    
-}]
+]
 
 exports.showLoginForm = (req,res,next)=>{
   res.render('logInForm',{ pageTitle: 'controllers-showLoginPage'})
 }
 
-exports.showLoggedIn = (req,res,next)=>{
+exports.showLoggedIn = async(req,res,next)=>{
+    const {firstName,password} = req.body;
+    const userFound =  await registeredUser.findOne({firstName});
+
+
+          if(!userFound)
+          {
+            return res.status(422).render('logInForm',
+            {
+              pageTitle:'controllers-showLoggedIn',
+              isLoggedIn: false,
+              errMsg : ['User Not Found'],
+              oldInput: {
+              firstName }
+            }
+          )
+          }
+
+            const isMatch = await bcrypt.compare(password,userFound.password);
+              if(!isMatch)
+              {
+                return res.status(422).render('logInForm',
+                  {
+                  pageTitle:'controllers-showLoggedIn',
+                  isLoggedIn: false,
+                  errMsg : ['Invalid Password'],
+                  oldInput: {
+                  firstName
+
+                  }
+                  }
+              )
+              }
+
   //res.cookie('isLoggedIn', true);
   req.session.isLoggedIn = true;
+  req.session.user = userFound;
+  console.log(req.session.user);
+  console.log(req.session.isLoggedIn);
   //console.log("Session: ", req.session);
   res.render('loggedIn',{pageTitle: 'controllers-showLoggedIn'})
 }
@@ -94,7 +168,7 @@ exports.loggedOut = (req,res,next)=>{
     res.redirect('/');
 }
 exports.showHome = (req, res, next) => {
-  console.log("session: ", req.session.isLoggedIn);
+  console.log("isLoggedIn-session: ", req.session.isLoggedIn);
   res.render("homePage", { pageTitle: "controllers-showHome", isLoggedIn:req.isLoggedIn });
 };
 exports.showForm = (req, res, next) => {
