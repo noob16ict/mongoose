@@ -176,9 +176,18 @@ exports.showForm = (req, res, next) => {
 };
 exports.saveDataAndShowSuccess = (req, res, next) => {
   const { stId, personName, deptName, gender, contactNo, address } = req.body;
+ // console.log(photo);
+// console.log(req.file);
+   const photo = req.file;
+  if(!req.file){
+    console.log("no image provided");
+    res.status(422).render('form', {pageTitle:'saveDataAndShowSuccess'});
+    return;
+  }
   const resultObj = new model(
     {stId,
     personName,
+    photo: "uploads/"+photo.filename,
     deptName,
     gender,
     contactNo,
@@ -191,7 +200,9 @@ exports.saveDataAndShowSuccess = (req, res, next) => {
   res.render("success", { pageTitle: "controllers-saveDataAndShowSuccess" , msg: "New entry done!"});
 };
 exports.showResult = (req, res, next) => {
+  
   model.find().then((element) => {
+    //console.log("hiii", element.photo);
     res.render("result", {
       pageTitle: "controllers-showResult",
       resultArray: element,

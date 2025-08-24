@@ -9,6 +9,7 @@ const {firstRouter} = require('./routes/firstRouter');
 const errorController = require('./controllers/error');
 //const {mongoConnect} = require('./util/databaseUtil');
 const { default: mongoose } = require('mongoose');
+const multer = require('multer');
 
 
 const app = express();
@@ -17,7 +18,39 @@ const store = new MongoDBStore ({
   uri:"mongodb+srv://root:root@abidict.s8jeg1g.mongodb.net/abidDB?retryWrites=true&w=majority&appName=abidICT",
   collection:'session'
 })
+const fileFilter = (req,file,cb)=>{
+  if( [ 'image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype))
+  {
+    cb(null, true);
+  }
+  else cb(null,false);
+}
+function random(len){
+  const sm = "abcdefghijklmnopqrstuvwxyz";
+  const cap = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let res = "";
+  for(let i=0; i<len; i++)
+  {
+   res+= sm[Math.floor(Math.random() * sm.length)];
+   res+= cap[Math.floor(Math.random() * cap.length)]; 
+  }
+  return res;
+}
+
+const storage = multer.diskStorage(
+  {
+    destination: (req,file,cb)=>{
+      cb(null, 'uploads/');
+    },
+    filename: (req,file,cb)=>{
+      cb(null, random(10)+'-'+file.originalname.replace(/\s+/g, ''));
+    }
+  }
+);
+
 app.use(express.urlencoded());
+app.use(multer({storage, fileFilter}).single('photo'));
+app.use('/uploads', express.static('uploads'));
 
 app.use(session({
 secret: 'this-is-secret',

@@ -12,6 +12,9 @@ const mySchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  photo:{
+   
+  },
   personName: {
     type: String,
     required: true,
