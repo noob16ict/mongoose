@@ -1,11 +1,15 @@
 <%-include('head')%>
 </head>
 <body>
-<form method='POST' action="/editDone/<%=data._id %>">
+<form method='POST' action="/editDone/<%=data._id %>" enctype="multipart/form-data">
   <div style=" margin-left: 2rem; margin-top: 3rem; ">
       
           <label for="personName">Name:</label>
           <input type="text" id="personName" value ="<%=data.personName%>" name="personName" placeholder="Enter your name">
+          <br><br>
+          <label for="photo">Photo:</label>
+          <input type="file" id="photo" name="photo" accept="image/jpg, image/jpeg, image/png">
+          <br><br>
           <br><br>
           <label for="stId">Student ID:</label>
           <input type="text" id="stId" name="stId" value ="<%=data.stId%>" placeholder="Enter your student ID ">

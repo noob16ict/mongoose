@@ -1,4 +1,5 @@
 const session = require('express-session');
+const fs = require('fs');
 
 const model = require("../model/onlyModel");
 const registeredUser = require('../model/registeredUser');
@@ -176,9 +177,10 @@ exports.showForm = (req, res, next) => {
 };
 exports.saveDataAndShowSuccess = (req, res, next) => {
   const { stId, personName, deptName, gender, contactNo, address } = req.body;
- // console.log(photo);
+// console.log(photo);
 // console.log(req.file);
    const photo = req.file;
+   //console.log(photo.filename);
   if(!req.file){
     console.log("no image provided");
     res.status(422).render('form', {pageTitle:'saveDataAndShowSuccess'});
@@ -212,6 +214,7 @@ exports.showResult = (req, res, next) => {
 exports.showInfo = (req, res, next) => {
   const uniqueIdOfMongo = req.params._id;
   model.findById(uniqueIdOfMongo).then((element) => {
+    console.log(element);
     res.render("studentInfo", {
       pageTitle: "showController.showInfo",
       studentDetails: element,
@@ -235,6 +238,8 @@ exports.showEditForm = (req, res, next) => {
 
  exports.saveEdit = (req, res, next) => {
   const { stId, personName, deptName, gender, contactNo, address } = req.body;
+ // const photo = req.file;
+  //console.log(photo);
   model.findById(req.params._id)
   .then(
     data=>{
@@ -244,6 +249,18 @@ exports.showEditForm = (req, res, next) => {
       data.gender = gender;
       data.contactNo = contactNo;
       data.address = address;
+     
+      if(req.file){
+      fs.unlink(data.photo, (err)=>{
+        if(err)
+        {console.log(err);}
+      });
+
+      data.photo = "uploads/"+req.file.filename;
+    
+    }
+      
+
       data.save().then(
         ()=>{
           console.log('Edited');
